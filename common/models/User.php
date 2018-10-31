@@ -206,14 +206,13 @@ class User extends ActiveRecord implements IdentityInterface
             return false;
         }
     }
-}
 
     /**
      * @return \yii\db\ActiveQuery
      */
     public function getTokens()
     {
-        return $this->hasMany(Token::class, ['user_id' => 'id']);
+        return $this->hasMany(Token::className(), ['user_id' => 'id']);
     }
 
     public function fields()
