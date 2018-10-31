@@ -1,12 +1,9 @@
 <?php
 namespace common\models;
-
 use Yii;
-use yii\base\NotSupportedException;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
 use yii\web\IdentityInterface;
-
 /**
  * User model
  *
@@ -31,7 +28,7 @@ class User extends ActiveRecord implements IdentityInterface
 
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public static function tableName()
     {
@@ -39,7 +36,7 @@ class User extends ActiveRecord implements IdentityInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function behaviors()
     {
@@ -49,7 +46,7 @@ class User extends ActiveRecord implements IdentityInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function rules()
     {
@@ -62,7 +59,7 @@ class User extends ActiveRecord implements IdentityInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public static function findIdentity($id)
     {
@@ -70,11 +67,15 @@ class User extends ActiveRecord implements IdentityInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public static function findIdentityByAccessToken($token, $type = null)
     {
-        throw new NotSupportedException('"findIdentityByAccessToken" is not implemented.');
+        return static::find()
+            ->joinWith('tokens t')
+            ->andWhere(['t.token' => $token])
+            ->andWhere(['>', 't.expired_at', time()])
+            ->one();
     }
 
     /**
@@ -124,7 +125,7 @@ class User extends ActiveRecord implements IdentityInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getId()
     {
@@ -132,7 +133,7 @@ class User extends ActiveRecord implements IdentityInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getAuthKey()
     {
@@ -140,7 +141,7 @@ class User extends ActiveRecord implements IdentityInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function validateAuthKey($authKey)
     {
@@ -204,5 +205,23 @@ class User extends ActiveRecord implements IdentityInterface
         } else {
             return false;
         }
+    }
+}
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getTokens()
+    {
+        return $this->hasMany(Token::class, ['user_id' => 'id']);
+    }
+
+    public function fields()
+    {
+        return [
+            'id' => 'id',
+            'username' => 'username',
+            'email' => 'email',
+        ];
     }
 }
