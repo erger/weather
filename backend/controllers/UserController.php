@@ -110,7 +110,9 @@ class UserController extends Controller
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post())) {
-            $model->setPassword($model->password_hash);
+            if(!empty($model->password_hash)){
+                $model->setPassword($model->password_hash);
+            }
             $model->generateAuthKey();
             if($model->save()) {
                 return $this->redirect(['view', 'id' => $model->id]);
