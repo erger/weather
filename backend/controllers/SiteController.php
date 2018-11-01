@@ -3,6 +3,7 @@ namespace backend\controllers;
 
 use backend\models\WeatherCities;
 use Yii;
+use yii\httpclient\Client;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
@@ -27,7 +28,7 @@ class SiteController extends Controller
                         'allow' => true,
                     ],
                     [
-                        'actions' => ['logout', 'index'],
+                        'actions' => ['logout', 'index', 'check'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -97,5 +98,20 @@ class SiteController extends Controller
         Yii::$app->user->logout();
 
         return $this->goHome();
+    }
+
+    public function actionCheck()
+    {
+        $client = new Client();
+        $response = $client->createRequest()
+                            ->setUrl('http://weather.local/weather')
+                            ->setMethod('get')
+                            ->setHeaders([
+                                'Content-Type' => 'application/json' ,
+                                'Authorization' => 'Bearer '.$_POST['token'],
+
+                                ])
+                            ->send();
+        var_dump($response->data);
     }
 }
