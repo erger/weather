@@ -1,6 +1,7 @@
 <?php
 namespace backend\controllers;
 
+use backend\models\WeatherCities;
 use Yii;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
@@ -54,16 +55,6 @@ class SiteController extends Controller
     }
 
     /**
-     * Displays homepage.
-     *
-     * @return string
-     */
-    public function actionIndex()
-    {
-        return $this->render('index');
-    }
-
-    /**
      * Login action.
      *
      * @return string
@@ -84,6 +75,16 @@ class SiteController extends Controller
                 'model' => $model,
             ]);
         }
+    }
+
+    /**
+     * Displays homepage.
+     *
+     * @return string
+     */
+    public function actionIndex()
+    {
+        return $this->render('index');
     }
 
     /**
